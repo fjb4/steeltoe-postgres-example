@@ -1,0 +1,6 @@
+---
+applications:
+  - name: postgres-example
+    random-route: true
+    services:
+      - my-postgres

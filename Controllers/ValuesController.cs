@@ -1,18 +1,19 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using Npgsql;
-namespace Pivotal.SteeltoeServiceConnectorsExample.Controllers
+using Pivotal.SteeltoeProgresExample.Models;
+
+namespace Pivotal.SteeltoeProgresExample.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
         private readonly NpgsqlConnection _dbConnection;
+
         public ValuesController([FromServices] NpgsqlConnection dbConnection)
         {
             _dbConnection = dbConnection;
@@ -20,46 +21,24 @@ namespace Pivotal.SteeltoeServiceConnectorsExample.Controllers
 
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<InformationSchemaTable>>> Get()
         {
-            List<string> tables = new List<string>();
+            IEnumerable<InformationSchemaTable> tables = null;
 
             _dbConnection.Open();
-            DataTable dt = _dbConnection.GetSchema("Databases");
-            _dbConnection.Close();
-            foreach (DataRow row in dt.Rows)
+
+            try
             {
-                string tablename = (string)row[2];
-                tables.Add(tablename);
+                // interact with the database to prove we're able to connect
+                tables = await _dbConnection.QueryAsync<InformationSchemaTable>(
+                    "SELECT * FROM INFORMATION_SCHEMA.TABLES");
             }
-            return tables;
-        }
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
+            finally
+            {
+                _dbConnection.Close();
+            }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-
+            return tables?.ToList();
         }
     }
 }
