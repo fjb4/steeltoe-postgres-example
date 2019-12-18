@@ -3,8 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <AssemblyName>Pivotal.SteeltoeProgresExample</AssemblyName>
-    <RootNamespace>Pivotal.SteeltoeProgresExample</RootNamespace>
+    <AssemblyName>ProgresExample</AssemblyName>
+    <RootNamespace>ProgresExample</RootNamespace>
+    <Company>ProgresExample</Company>
+    <Product>ProgresExample</Product>
     </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +14,6 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Npgsql" Version="4.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Steeltoe.CloudFoundry.ConnectorCore" Version="2.4.0" />
     <PackageReference Include="Steeltoe.Management.CloudFoundryCore" Version="2.4.0" />
   </ItemGroup>
 </Project>

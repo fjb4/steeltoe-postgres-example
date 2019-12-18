@@ -1,4 +1,4 @@
-namespace Pivotal.SteeltoeProgresExample.Models
+namespace PostgresExample.Models
 {
     public class InformationSchemaTable
     {

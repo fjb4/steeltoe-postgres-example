@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Steeltoe.Extensions.Configuration.CloudFoundry;
 
-namespace Pivotal.SteeltoeProgresExample
+namespace PostgresExample
 {
     public class Program
     {
@@ -17,8 +16,6 @@ namespace Pivotal.SteeltoeProgresExample
         {
             var builder = WebHost.CreateDefaultBuilder(args)
                 .UseDefaultServiceProvider(configure => configure.ValidateScopes = false)
-                .UseCloudFoundryHosting()
-                .AddCloudFoundry()
                 .UseStartup<Startup>();
 
             return builder;
