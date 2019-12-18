@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using Pivotal.SteeltoeProgresExample.Models;
+using PostgresExample.Models;
 
-namespace Pivotal.SteeltoeProgresExample.Controllers
+namespace PostgresExample.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

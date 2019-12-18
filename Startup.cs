@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Steeltoe.CloudFoundry.Connector.PostgreSql;
 
-namespace Pivotal.SteeltoeProgresExample
+namespace PostgresExample
 {
     public class Startup
     {

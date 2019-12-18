@@ -2,7 +2,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Steeltoe.Extensions.Configuration.CloudFoundry;
 
-namespace Pivotal.SteeltoeProgresExample
+namespace PostgresExample
 {
     public class Program
     {

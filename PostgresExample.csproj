@@ -3,8 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <AssemblyName>Pivotal.SteeltoeProgresExample</AssemblyName>
-    <RootNamespace>Pivotal.SteeltoeProgresExample</RootNamespace>
+    <AssemblyName>ProgresExample</AssemblyName>
+    <RootNamespace>ProgresExample</RootNamespace>
+    <Company>PostgresExample</Company>
+    <Product>PostgresExample</Product>
     </PropertyGroup>
 
   <ItemGroup>
