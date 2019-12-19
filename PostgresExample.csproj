@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <AssemblyName>ProgresExample</AssemblyName>
-    <RootNamespace>ProgresExample</RootNamespace>
     <Company>ProgresExample</Company>
     <Product>ProgresExample</Product>
     </PropertyGroup>
