@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Npgsql;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
 using PostgresExample.Models;
 
 namespace PostgresExample.Controllers
@@ -45,10 +50,8 @@ namespace PostgresExample.Controllers
 
             conn.ProvideClientCertificatesCallback += certs =>
             {
-                var certPem = (string) credentialsJson.SelectToken("ClientCert");
-
-                var certBytes = ConvertPemToBytes(certPem, "CERTIFICATE");
-                certs.Add(new X509Certificate2(certBytes));
+                var cert = GetClientCertificate(credentialsJson);
+                certs.Add(cert);
             };
 
             return conn;
@@ -61,7 +64,7 @@ namespace PostgresExample.Controllers
                 Host = (string) credentialsJson.SelectToken("host"),
                 Database = (string) credentialsJson.SelectToken("database_name"),
                 Username = (string) credentialsJson.SelectToken("Username"),
-                //Password = (string) credentialsJson.SelectToken("Password"),
+                Password = (string) credentialsJson.SelectToken("Password"),
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true
             };
@@ -69,16 +72,37 @@ namespace PostgresExample.Controllers
             return connStringBuilder.ConnectionString;
         }
 
-        private static byte[] ConvertPemToBytes(string certData, string type)
+        private static X509Certificate2 GetClientCertificate(JToken credentialsJson)
         {
-            var header = $"-----BEGIN {type}-----";
-            var footer = $"-----END {type}-----";
+            var clientCert = (string) credentialsJson.SelectToken("ClientCert");
+            var certBytes = Encoding.ASCII.GetBytes(clientCert);
 
-            var start = certData.IndexOf(header, StringComparison.Ordinal) + header.Length;
-            var end = certData.IndexOf(footer, start, StringComparison.Ordinal);
-            var base64 = certData.Substring(start, end - start);
+            var clientKey = (string) credentialsJson.SelectToken("ClientKey");
+            var keyBytes = Encoding.ASCII.GetBytes(clientKey);
 
-            return Convert.FromBase64String(base64);
+            var cert = GetX509FromBytes(certBytes, keyBytes);
+            return cert;
+        }
+
+        private static X509Certificate2 GetX509FromBytes(byte[] clientCertificate, byte[] clientKey)
+        {
+            var cert = new X509Certificate2(clientCertificate);
+            object obj;
+
+            using (var reader = new StreamReader(new MemoryStream(clientKey)))
+            {
+                obj = new PemReader(reader).ReadObject();
+                if (obj is AsymmetricCipherKeyPair cipherKey) obj = cipherKey.Private;
+            }
+
+            var rsaKeyParams = (RsaPrivateCrtKeyParameters) obj;
+            var rsa = RSAUtilities.ToRSA(rsaKeyParams);
+
+            cert = cert.CopyWithPrivateKey(rsa);
+
+            // Following is work around for https://github.com/dotnet/corefx/issues/24454
+            var buffer = cert.Export(X509ContentType.Pfx, (string) null);
+            return new X509Certificate2(buffer, (string) null);
         }
     }
 }
